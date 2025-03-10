@@ -5,7 +5,8 @@ import numpy as np
 import openai
 
 # Initialize the vector store and similarity threshold
-vector_store = {}
+if "vector_store" not in st.session_state:
+    st.session_state.vector_store = {}
 similarity_threshold = 0.7
 
 # Initialize the embedding model
@@ -21,7 +22,7 @@ def get_embedding(query):
 def search_similar_vectors(query_embedding):
     """Search for similar vectors in the vector store."""
     similar_vectors = []
-    for stored_query, stored_embedding in vector_store.items():
+    for stored_query, stored_embedding in st.session_state.vector_store.items():
         if stored_query.endswith("_response"):
             continue
         
@@ -33,30 +34,38 @@ def search_similar_vectors(query_embedding):
 def add_to_vector_store(query, response):
     """Add a query and its response to the vector store."""
     query_embedding = get_embedding(query)
-    vector_store[query] = query_embedding
+    st.session_state.vector_store[query] = query_embedding
     # Store the response (for simplicity, just store it as a string)
-    vector_store[f"{query}_response"] = response
+    st.session_state.vector_store[f"{query}_response"] = response
 
 def get_response_from_cache(query):
     """Get a response from the cache if a similar query exists."""
     query_embedding = get_embedding(query)
+    if query in st.session_state.vector_store:
+        # If the exact query is in the cache, return its response
+        return st.session_state.vector_store[f"{query}_response"]
+    
     similar_vectors = search_similar_vectors(query_embedding)
     if similar_vectors:
         # Use the response associated with the top similar vector
         top_query = max(similar_vectors, key=lambda x: x[1])[0]
-        return vector_store[f"{top_query}_response"]
+        return st.session_state.vector_store[f"{top_query}_response"]
     else:
         return None
 
 def call_llm(query):
     """Call OpenAI API to get a response."""
     openai.api_key = st.secrets["OPENAI_API_KEY"]
-    client = openai.OpenAI(api_key=openai.api_key)
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": query}],
-    )
-    return response.choices[0].message.content
+    try:
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=query,
+            max_tokens=50,
+            temperature=0.0
+        )
+        return response.choices[0].text
+    except Exception as e:
+        return f"Error calling LLM: {e}"
 
 def main():
     st.title("Semantic Caching Demo")
