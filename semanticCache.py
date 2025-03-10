@@ -7,9 +7,8 @@ import numpy as np
 vector_store = {}
 similarity_threshold = 0.7
 
-# Initialize the embedding model
-#model = SentenceTransformer("all-mpnet-base-v2")
-@st.cache(allow_output_mutation=True)
+# Initialize the embedding model using st.cache_data
+@st.cache_data(ttl=3600)  # Cache for 1 hour
 def load_model():
     return SentenceTransformer("all-mpnet-base-v2")
 
@@ -23,6 +22,10 @@ def search_similar_vectors(query_embedding):
     """Search for similar vectors in the vector store."""
     similar_vectors = []
     for stored_query, stored_embedding in vector_store.items():
+        # Ignore responses stored in the vector store
+        if stored_query.endswith("_response"):
+            continue
+        
         similarity = np.dot(query_embedding, stored_embedding) / (np.linalg.norm(query_embedding) * np.linalg.norm(stored_embedding))
         if similarity > similarity_threshold:
             similar_vectors.append((stored_query, similarity))
