@@ -2,13 +2,14 @@ import streamlit as st
 from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
+import openai
 
 # Initialize the vector store and similarity threshold
 vector_store = {}
 similarity_threshold = 0.7
 
-# Initialize the embedding model using st.cache_data
-@st.cache_data(ttl=3600)  # Cache for 1 hour
+# Initialize the embedding model
+@st.cache_data(ttl=3600)
 def load_model():
     return SentenceTransformer("all-mpnet-base-v2")
 
@@ -22,7 +23,6 @@ def search_similar_vectors(query_embedding):
     """Search for similar vectors in the vector store."""
     similar_vectors = []
     for stored_query, stored_embedding in vector_store.items():
-        # Ignore responses stored in the vector store
         if stored_query.endswith("_response"):
             continue
         
@@ -50,9 +50,13 @@ def get_response_from_cache(query):
         return None
 
 def call_llm(query):
-    """Simulate calling an LLM (replace with actual LLM call)."""
-    # For demonstration purposes, just return a generic response
-    return f"LLM response for: {query}"
+    """Call OpenAI API to get a response."""
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": query}]
+    )
+    return response.choices[0].message.content
 
 def main():
     st.title("Semantic Caching Demo")
