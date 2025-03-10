@@ -3,6 +3,7 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
 import openai
+from openai import OpenAI
 
 # Initialize the vector store and similarity threshold
 vector_store = {}
@@ -14,6 +15,8 @@ def load_model():
     return SentenceTransformer("all-mpnet-base-v2")
 
 model = load_model()
+api_key=st.secrets["OPENAI_API_KEY"]
+client = OpenAI(api_key=api_key)
 
 def get_embedding(query):
     """Generate embedding for a query."""
@@ -51,14 +54,13 @@ def get_response_from_cache(query):
 
 def call_llm(query):
     """Call OpenAI API to get a response."""
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
-    response = openai.Completion.create(
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         prompt=query,
         max_tokens=50,
         temperature=0.0
     )
-    return response.choices[0].text
+    return response.choices[0].message.content
 
 def main():
     st.title("Semantic Caching Demo")
