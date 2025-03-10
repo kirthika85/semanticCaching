@@ -51,13 +51,12 @@ def get_response_from_cache(query):
 def call_llm(query):
     """Call OpenAI API to get a response."""
     openai.api_key = st.secrets["OPENAI_API_KEY"]
-    response = openai.Completion.create(
+    client = openai.OpenAI(api_key=openai.api_key)
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
-        prompt=query,
-        max_tokens=50,
-        temperature=0.0
+        messages=[{"role": "user", "content": query}],
     )
-    return response.choices[0].text
+    return response.choices[0].message.content
 
 def main():
     st.title("Semantic Caching Demo")
