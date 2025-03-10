@@ -75,5 +75,3 @@ def main():
             add_to_vector_store(query, llm_response)
             st.write(f"Response from LLM: {llm_response}")
 
-if __name__ == "__main__":
-    main()
