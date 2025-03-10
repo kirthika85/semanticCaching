@@ -61,7 +61,7 @@ def call_llm(query):
         response = openai.chat.completions.create(
         messages=[
                 {"role": "system", "content": "You are an expert in answering user questions"},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": query}
             ],
             temperature=0.0
         )
