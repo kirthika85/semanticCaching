@@ -8,7 +8,12 @@ vector_store = {}
 similarity_threshold = 0.7
 
 # Initialize the embedding model
-model = SentenceTransformer("all-mpnet-base-v2")
+#model = SentenceTransformer("all-mpnet-base-v2")
+@st.cache(allow_output_mutation=True)
+def load_model():
+    return SentenceTransformer("all-mpnet-base-v2")
+
+model = load_model()
 
 def get_embedding(query):
     """Generate embedding for a query."""
