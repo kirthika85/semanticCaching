@@ -59,9 +59,10 @@ def call_llm(query):
     try:
         # Use the Completion endpoint for text generation
         response = openai.chat.completions.create(
-            model="gpt-3.0",
-            prompt=query,
-            max_tokens=50,
+        messages=[
+                {"role": "system", "content": "You are an expert in answering user questions"},
+                {"role": "user", "content": prompt}
+            ],
             temperature=0.0
         )
         return response.choices[0].message.content
