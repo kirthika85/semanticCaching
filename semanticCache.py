@@ -68,9 +68,12 @@ def main():
         if cached_response:
             st.write(f"Response from cache: {cached_response}")
         else:
-            llm_response = call_llm(query)
-            add_to_vector_store(query, llm_response)
-            st.write(f"Response from LLM: {llm_response}")
+            try:
+                llm_response = call_llm(query)
+                add_to_vector_store(query, llm_response)
+                st.write(f"Response from LLM: {llm_response}")
+            except Exception as e:
+                st.error(f"Error calling LLM: {e}")
 
 if __name__ == "__main__":
     main()
