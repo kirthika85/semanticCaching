@@ -59,7 +59,7 @@ def call_llm(query):
     try:
         # Use the Completion endpoint for text generation with a compatible model
         response = openai.Completion.create(
-            model="text-davinci-003",
+            model="gpt-3.5",
             prompt=query,
             max_tokens=50,
             temperature=0.0
