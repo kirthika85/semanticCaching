@@ -10,7 +10,7 @@ if "vector_store" not in st.session_state:
     st.session_state.vector_store = {}
 similarity_threshold = 0.7
 
-api_key = st.secrets["OPENAI_API_KEY"]
+api_key=st.secrets["OPENAI_API_KEY"]
 client = OpenAI(api_key=api_key)
 
 # Initialize the embedding model
