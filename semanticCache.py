@@ -57,9 +57,9 @@ def call_llm(query):
     """Call OpenAI API to get a response."""
     openai.api_key = st.secrets["OPENAI_API_KEY"]
     try:
-        # Use the Completion endpoint for text generation
+        # Use the Completion endpoint for text generation with a compatible model
         response = openai.Completion.create(
-            model="gpt-3.5-turbo",
+            model="text-davinci-003",
             prompt=query,
             max_tokens=50,
             temperature=0.0
