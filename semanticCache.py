@@ -10,9 +10,6 @@ if "vector_store" not in st.session_state:
     st.session_state.vector_store = {}
 similarity_threshold = 0.7
 
-api_key=st.secrets["OPENAI_API_KEY"]
-client = OpenAI(api_key=api_key)
-
 # Initialize the embedding model
 @st.cache_data(ttl=3600)
 def load_model():
@@ -74,6 +71,9 @@ def call_llm(query):
         return f"Error calling LLM: {e}"
 
 def main():
+    api_key=st.secrets["OPENAI_API_KEY"]
+    client = OpenAI(api_key=api_key)
+    
     st.title("Semantic Caching Demo")
     query = st.text_input("Enter your query")
     
