@@ -3,6 +3,7 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
 import openai
+from openai import OpenAI
 
 # Initialize the vector store and similarity threshold
 if "vector_store" not in st.session_state:
@@ -55,10 +56,10 @@ def get_response_from_cache(query):
 
 def call_llm(query):
     """Call OpenAI API to get a response."""
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    OpenAI.api_key = st.secrets["OPENAI_API_KEY"]
     try:
         # Use the ChatCompletion endpoint for chat models
-        response = openai.ChatCompletion.create(
+        response = OpenAI.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "user", "content": query}
