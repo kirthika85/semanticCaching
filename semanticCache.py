@@ -57,14 +57,15 @@ def call_llm(query):
     """Call OpenAI API to get a response."""
     openai.api_key = st.secrets["OPENAI_API_KEY"]
     try:
-        # Use the Completion endpoint for text generation with a compatible model
-        response = openai.Completion.create(
-            model="gpt-4",
-            prompt=query,
-            max_tokens=50,
+        # Use the ChatCompletion endpoint for chat models
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "user", "content": query}
+            ],
             temperature=0.0
         )
-        return response.choices[0].text
+        return response.choices[0].message.content
     except Exception as e:
         return f"Error calling LLM: {e}"
 
