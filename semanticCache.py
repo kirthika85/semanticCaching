@@ -74,7 +74,7 @@ def main():
     
     if st.button("Submit"):
         cached_response = get_response_from_cache(query)
-        if cached_response:
+        if cached_response and not cached_response.startswith("Error calling LLM:"):
             st.write(f"Response from cache: {cached_response}")
         else:
             try:
