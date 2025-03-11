@@ -10,6 +10,9 @@ if "vector_store" not in st.session_state:
     st.session_state.vector_store = {}
 similarity_threshold = 0.7
 
+api_key = st.secrets["OPENAI_API_KEY"]
+client = OpenAI(api_key=api_key)
+
 # Initialize the embedding model
 @st.cache_data(ttl=3600)
 def load_model():
@@ -56,9 +59,6 @@ def get_response_from_cache(query):
 
 def call_llm(query):
     """Call OpenAI API to get a response."""
-    api_key = st.secrets["OPENAI_API_KEY"]
-    client = OpenAI(api_key=api_key)
-
     try:
         # Use the Completion endpoint for text generation with a conversational prompt
         response = client.chat.completions.create(
